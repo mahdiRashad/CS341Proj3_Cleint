@@ -1,5 +1,4 @@
 ConnectFourGUI.class
 Message.class
-MessageType.class
+Client.class
 GuiClient.class
-ConnectFourGUI$1.class
