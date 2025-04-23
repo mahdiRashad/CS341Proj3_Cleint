@@ -1,10 +1,7 @@
-import java.io.*;
-import java.net.Socket;
+import javax.swing.*;
 
 public class GuiClient {
-	public static void main(String[] args) throws IOException {
-		Socket socket = new Socket("127.0.0.1", 5555);
-		ConnectFourGUI gui = new ConnectFourGUI(socket);
-		gui.setVisible(true);
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(() -> new LoginScreen().setVisible(true));
 	}
 }

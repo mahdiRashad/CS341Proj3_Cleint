@@ -8,11 +8,15 @@ public class ConnectFourGUI extends JFrame {
 	private JLabel[][] boardLabels = new JLabel[6][7];
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
-	private int playerId; // 0 = red, 1 = yellow
+	private int playerId;
 	private boolean myTurn = false;
+	private String username;
 
-	public ConnectFourGUI(Socket socket) throws IOException {
+	public ConnectFourGUI(Socket socket, ObjectOutputStream out, ObjectInputStream in) {
 		super("Connect Four");
+		this.out = out;
+		this.in = in;
+
 		setSize(700, 600);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
@@ -28,7 +32,6 @@ public class ConnectFourGUI extends JFrame {
 			}
 		}
 
-		// Chat setup
 		JTextArea chatArea = new JTextArea(10, 30);
 		JTextField chatInput = new JTextField();
 		JButton sendButton = new JButton("Send");
@@ -44,7 +47,6 @@ public class ConnectFourGUI extends JFrame {
 
 		add(chatPanel, BorderLayout.SOUTH);
 
-		// Column control panel
 		JPanel controlPanel = new JPanel(new GridLayout(1, 7));
 		for (int c = 0; c < 7; c++) {
 			final int col = c;
@@ -67,20 +69,15 @@ public class ConnectFourGUI extends JFrame {
 		add(controlPanel, BorderLayout.NORTH);
 		add(boardPanel, BorderLayout.CENTER);
 
-		// Object streams (MUST init out before in)
-		out = new ObjectOutputStream(socket.getOutputStream());
-		out.flush();
-		in = new ObjectInputStream(socket.getInputStream());
-
 		sendButton.addActionListener(e -> {
 			String text = chatInput.getText();
 			if (!text.isEmpty()) {
 				try {
 					Message msg = new Message(playerId, text);
 					msg.type = MessageType.TEXT;
+					msg.username = username;
 					out.writeObject(msg);
 					out.flush();
-					chatArea.append("Me: " + text + "\n");
 					chatInput.setText("");
 				} catch (IOException ex) {
 					ex.printStackTrace();
@@ -96,19 +93,21 @@ public class ConnectFourGUI extends JFrame {
 					Message msg = (Message) obj;
 
 					switch (msg.type) {
-						case NEWUSER:
+						case NEW_USER:
 							playerId = msg.recipient;
 							myTurn = (playerId == 0);
+							username = msg.username; // Capture username from NEWUSER
+							System.out.println("[CLIENT] I am player " + playerId + " (" + username + ")");
 							break;
 						case TEXT:
-							chatArea.append("Opponent: " + msg.message + "\n");
+							chatArea.append(msg.username + ": " + msg.message + "\n");
 							break;
 						case MOVE:
 							String[] parts = msg.message.split(":");
 							int p = Integer.parseInt(parts[0]);
 							int c = Integer.parseInt(parts[1]);
 							updateBoard(p, c);
-							myTurn = (p != playerId); // switch turn
+							myTurn = (p != playerId);
 							break;
 						case WIN:
 							int winner = msg.recipient;
@@ -143,10 +142,9 @@ public class ConnectFourGUI extends JFrame {
 		int res = JOptionPane.showConfirmDialog(this, "Play again?", "Game Over", JOptionPane.YES_NO_OPTION);
 		try {
 			if (res == JOptionPane.YES_OPTION) {
-				// Placeholder for replay logic
-				System.exit(0);
+				System.exit(0); // or reset the game
 			} else {
-				out.writeObject(new Message(playerId, false)); // DISCONNECT message
+				out.writeObject(new Message(playerId, false));
 				System.exit(0);
 			}
 		} catch (IOException e) {
