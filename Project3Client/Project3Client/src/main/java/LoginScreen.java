@@ -82,7 +82,7 @@ public class LoginScreen extends JFrame {
                     // ✅ Now reuse the socket and streams in ConnectFourGUI
                     ObjectOutputStream finalOut = out;
                     ObjectInputStream finalIn = in;
-                    new ConnectFourGUI(socket, finalOut, finalIn).setVisible(true);
+                    new ConnectFourGUI(socket, finalOut, finalIn, password).setVisible(true);
                     this.dispose();
                     return;
                 }

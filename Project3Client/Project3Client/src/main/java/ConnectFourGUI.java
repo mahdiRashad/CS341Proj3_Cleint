@@ -11,11 +11,13 @@ public class ConnectFourGUI extends JFrame {
 	private int playerId;
 	private boolean myTurn = false;
 	private String username;
+	private String password;
 
-	public ConnectFourGUI(Socket socket, ObjectOutputStream out, ObjectInputStream in) {
+	public ConnectFourGUI(Socket socket, ObjectOutputStream out, ObjectInputStream in, String password) {
 		super("Connect Four");
 		this.out = out;
 		this.in = in;
+		this.password = password;
 
 		setSize(700, 600);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -96,8 +98,7 @@ public class ConnectFourGUI extends JFrame {
 						case NEW_USER:
 							playerId = msg.recipient;
 							myTurn = (playerId == 0);
-							username = msg.username; // Capture username from NEWUSER
-							System.out.println("[CLIENT] I am player " + playerId + " (" + username + ")");
+							username = msg.username;
 							break;
 						case TEXT:
 							chatArea.append(msg.username + ": " + msg.message + "\n");
@@ -142,13 +143,47 @@ public class ConnectFourGUI extends JFrame {
 		int res = JOptionPane.showConfirmDialog(this, "Play again?", "Game Over", JOptionPane.YES_NO_OPTION);
 		try {
 			if (res == JOptionPane.YES_OPTION) {
-				System.exit(0); // or reset the game
+				// Dispose old game window
+				this.dispose();
+
+				// Reconnect to server
+				Socket newSocket = new Socket("localhost", 5555);
+				ObjectOutputStream newOut = new ObjectOutputStream(newSocket.getOutputStream());
+				newOut.flush();
+				ObjectInputStream newIn = new ObjectInputStream(newSocket.getInputStream());
+
+				// Re-send login message
+				Message login = new Message(MessageType.LOGIN, username, password); // use saved username and empty pw
+				newOut.writeObject(login);
+				newOut.flush();
+
+				Object response = newIn.readObject();
+				Message resMsg = (Message) response;
+				System.out.println(resMsg);
+				if ("SUCCESS".equals(resMsg.message) &&
+						resMsg.type == MessageType.LOGIN_RESULT) {
+
+					// Launch new game window
+					new ConnectFourGUI(newSocket, newOut, newIn, password).setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "Replay failed: unable to reconnect.");
+					System.exit(0);
+				}
+
 			} else {
-				out.writeObject(new Message(playerId, false));
+				Message disconnect = new Message(playerId, false);
+				disconnect.type = MessageType.DISCONNECT;
+				disconnect.username = username;
+				out.writeObject(disconnect);
+				out.flush();
+				this.dispose();
 				System.exit(0);
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, "Error while restarting game: " + e.getMessage());
+			System.exit(1);
 		}
 	}
+
 }
