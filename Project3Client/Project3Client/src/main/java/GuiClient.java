@@ -1,10 +1,14 @@
-import java.io.*;
-import java.net.Socket;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
-public class GuiClient {
-	public static void main(String[] args) throws IOException {
-		Socket socket = new Socket("127.0.0.1", 5555);
-		ConnectFourGUI gui = new ConnectFourGUI(socket);
-		gui.setVisible(true);
+public class GuiClient extends Application {
+
+	@Override
+	public void start(Stage primaryStage) {
+		new LoginScreen(primaryStage);
+	}
+
+	public static void main(String[] args) {
+		launch(args);
 	}
 }
