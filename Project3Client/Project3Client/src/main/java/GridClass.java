@@ -1,3 +1,5 @@
+import javafx.animation.FadeTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
@@ -9,6 +11,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,8 +24,8 @@ public class GridClass {
     private final int COLUMNS = 7;
     private final int SIZE = 80;
     private final Circle[][] board = new Circle[ROWS][COLUMNS];
+    private final boolean[][] trueBoard = new boolean[ROWS][COLUMNS];
     private final ObjectOutputStream out;
-
     private final BooleanSupplier isMyTurn;
 
     public GridClass(ObjectOutputStream out, BooleanSupplier isMyTurn) {
@@ -64,14 +67,63 @@ public class GridClass {
                 grid.add(cell, col, row);
             }
         }
+
+        fadeCircle(board);
         return grid;
     }
+
 
     public void updateBoard(int player, int col) {
         for (int row = ROWS - 1; row >= 0; row--) {
             if (board[row][col].getFill().equals(Color.WHITE)) {
-                board[row][col].setFill(player == 0 ? Color.RED : Color.YELLOW);
+                StackPane parent = (StackPane) board[row][col].getParent(); // <-- before replacing
+
+                Circle newSlot = new Circle(SIZE / 2 - 5);
+                newSlot.setFill(player == 1 ? Color.RED : Color.YELLOW); // Set player color
+                trueBoard[row][col] = true;
+                board[row][col] = newSlot;
+
+                parent.getChildren().add(newSlot);
+
+                // Animate dropping
+                TranslateTransition transition = new TranslateTransition(Duration.millis(500), newSlot);
+                transition.setFromY(-SIZE * ROWS);  // Start high above
+                transition.setToY(0);               // Drop into place
+                transition.play();
+
                 break;
+            }
+        }
+    }
+
+
+
+    private void fadeCircle(Circle[][] circles) {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLUMNS; col++) {
+                int currentCol = col;
+
+                circles[row][col].setOnMouseEntered(e -> {
+                    for (int r = 0; r < ROWS; r++) {
+                        if (!trueBoard[r][currentCol]) {
+                            FadeTransition inFade = new FadeTransition(Duration.millis(250), circles[r][currentCol]);
+                            inFade.setFromValue(1.0);
+                            inFade.setToValue(0.5);
+                            inFade.play();
+                        }
+                    }
+                });
+
+                circles[row][col].setOnMouseExited(e -> {
+                    for (int r = 0; r < ROWS; r++) {
+                        if (!trueBoard[r][currentCol]) {
+                            FadeTransition outFade = new FadeTransition(Duration.millis(250), circles[r][currentCol]);
+                            outFade.setFromValue(0.5);
+                            outFade.setToValue(1.0);
+                            outFade.play();
+                        }
+                    }
+                });
             }
         }
     }
@@ -81,10 +133,11 @@ public class GridClass {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Play again?", ButtonType.YES, ButtonType.NO);
             alert.setTitle("Game Over");
-
+            // 🧩 Change font for the whole dialog
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.setStyle("-fx-font-family: 'Arial'; -fx-font-size: 16px;");
 
+            // Optional: you can also style buttons separately if you want
             for (ButtonType buttonType : alert.getButtonTypes()) {
                 Button button = (Button) dialogPane.lookupButton(buttonType);
                 button.setStyle("-fx-font-family: 'Arial'; -fx-font-size: 16px;");

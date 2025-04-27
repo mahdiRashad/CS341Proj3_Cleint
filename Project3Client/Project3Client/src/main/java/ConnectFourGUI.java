@@ -79,8 +79,11 @@ class ConnectFourGUI {
 				playerId = msg.recipient;
 				myTurn = (playerId == 0);
 				GridPane grid = gclass.createGrid(playerId);
-//				VBox chatPanel = chat.getChatPanel();
-				root.getChildren().add(0, grid);
+				VBox gridBox = new VBox(10, grid);
+				gridBox.setAlignment(Pos.CENTER);
+
+
+				root.getChildren().add(0, gridBox);
 				break;
 			case TEXT:
 				chatArea.appendText(msg.username + ": " + msg.message + "\n");
