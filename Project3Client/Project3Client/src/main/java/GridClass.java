@@ -2,6 +2,7 @@ import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -22,7 +23,7 @@ import java.util.function.BooleanSupplier;
 public class GridClass {
     private final int ROWS = 6;
     private final int COLUMNS = 7;
-    private final int SIZE = 80;
+    private final int SIZE = 70;
     private final Circle[][] board = new Circle[ROWS][COLUMNS];
     private final boolean[][] trueBoard = new boolean[ROWS][COLUMNS];
     private final ObjectOutputStream out;
@@ -39,7 +40,8 @@ public class GridClass {
         grid.setPadding(new Insets(10));
         grid.setHgap(5);
         grid.setVgap(5);
-        grid.setStyle("-fx-background-color: #9aa1ec");
+        grid.setStyle("-fx-background-color: #8872f4;" +
+                      "-fx-background-radius: 30 30 4 4;");
 
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLUMNS; col++) {
@@ -69,6 +71,8 @@ public class GridClass {
         }
 
         fadeCircle(board);
+
+        grid.setAlignment(Pos.CENTER);
         return grid;
     }
 

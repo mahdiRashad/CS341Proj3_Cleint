@@ -1,21 +1,16 @@
 
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import java.io.*;
 import java.net.Socket;
 
 
 class ConnectFourGUI {
-	private GridPane board = new GridPane();
-	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	private int playerId;
 	private boolean myTurn;
@@ -24,16 +19,10 @@ class ConnectFourGUI {
 	private Stage stage;
 	private GridClass gclass;
 	private VBox root;
-	private ChatClass chat;
 
-
-	private final int ROWS = 6;
-	private final int COLUMNS = 7;
-	private final int SIZE = 80;
-	private final Circle[][] board1 = new Circle[ROWS][COLUMNS];
 
 	public ConnectFourGUI(Socket socket, ObjectOutputStream out, ObjectInputStream in, String username, String password) {
-		this.out = out;
+
 		this.in = in;
 		this.username = username;
 		this.password = password;
@@ -41,16 +30,14 @@ class ConnectFourGUI {
 		stage = new Stage();
 		gclass = new GridClass(out, () -> myTurn);
 		ChatClass chat = new ChatClass(out, username, playerId);
-
 		root = new VBox(10);
 		root.setPadding(new Insets(10));
-
-
 		VBox chatPanel = chat.getChatPanel();
+		root.setAlignment(Pos.CENTER);
 		root.getChildren().addAll(chatPanel);
-
-		stage.setScene(new Scene(root, 640, 600));
+		stage.setScene(new Scene(root, 750, 800));
 		root.setStyle("-fx-font-family: 'Helvetica';");
+		root.setStyle("-fx-background-color: linear-gradient(to bottom, #ECE9E6, #FFFFFF);");
 		stage.setTitle("Connect Four - " + username);
 		stage.show();
 
@@ -79,11 +66,14 @@ class ConnectFourGUI {
 				playerId = msg.recipient;
 				myTurn = (playerId == 0);
 				GridPane grid = gclass.createGrid(playerId);
-				VBox gridBox = new VBox(10, grid);
-				gridBox.setAlignment(Pos.CENTER);
-
-
-				root.getChildren().add(0, gridBox);
+				StackPane stackPane = new StackPane();
+				stackPane.getChildren().add(grid);
+				stackPane.setMaxWidth(550);
+				stackPane.setMinWidth(550);
+				stackPane.setMinHeight(450);
+				stackPane.maxHeight(450);
+				stackPane.setAlignment(Pos.CENTER);
+				root.getChildren().add(0, stackPane);
 				break;
 			case TEXT:
 				chatArea.appendText(msg.username + ": " + msg.message + "\n");
