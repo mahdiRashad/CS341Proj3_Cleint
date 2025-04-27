@@ -109,9 +109,20 @@ class ConnectFourGUI {
 				break;
 		}
 	}
-
+	//new alert
 	private void showAlert(String message) {
-		new Alert(Alert.AlertType.INFORMATION, message).showAndWait();
+		Platform.runLater(() -> {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText(null);
+
+			Label label = new Label(message);
+			label.setStyle("-fx-font-family: 'Arial'; -fx-font-size: 16px;");
+
+			alert.getDialogPane().setContent(label);
+			alert.getDialogPane().lookupButton(ButtonType.OK).setStyle("-fx-font-family: 'Arial'; -fx-font-size: 14px;");
+			alert.showAndWait();
+		});
 	}
 
 }

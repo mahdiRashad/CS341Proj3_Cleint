@@ -68,12 +68,12 @@ public class GridClass {
     }
 
     public void updateBoard(int player, int col) {
-            for (int row = ROWS - 1; row >= 0; row--) {
-                if (board[row][col].getFill().equals(Color.WHITE)) {
-                    board[row][col].setFill(player == 0 ? Color.RED : Color.YELLOW);
-                    break;
-                }
+        for (int row = ROWS - 1; row >= 0; row--) {
+            if (board[row][col].getFill().equals(Color.WHITE)) {
+                board[row][col].setFill(player == 0 ? Color.RED : Color.YELLOW);
+                break;
             }
+        }
     }
 
 
@@ -81,11 +81,10 @@ public class GridClass {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Play again?", ButtonType.YES, ButtonType.NO);
             alert.setTitle("Game Over");
-            // 🧩 Change font for the whole dialog
+
             DialogPane dialogPane = alert.getDialogPane();
             dialogPane.setStyle("-fx-font-family: 'Arial'; -fx-font-size: 16px;");
 
-            // Optional: you can also style buttons separately if you want
             for (ButtonType buttonType : alert.getButtonTypes()) {
                 Button button = (Button) dialogPane.lookupButton(buttonType);
                 button.setStyle("-fx-font-family: 'Arial'; -fx-font-size: 16px;");

@@ -31,7 +31,7 @@ public class ChatClass {
     public VBox getChatPanel() {
         TextField chatInput = new TextField();
         Button sendButton = new Button("Send");
-        Button exitButton = new Button("Exit"); // <-- New Exit button
+        Button exitButton = new Button("Exit");
 
         HBox chatBox = new HBox(5, chatInput, sendButton, exitButton);
 
@@ -41,15 +41,15 @@ public class ChatClass {
 
         exitButton.setOnAction(e -> {
             try {
-                Message msg = new Message(playerId, false); // false for disconnect
-                msg.type = MessageType.CLOSED;          // Set proper message type
-                msg.username = username;                    // Include username
+                Message msg = new Message(playerId, false);
+                msg.type = MessageType.CLOSED;
+                msg.username = username;
                 out.writeObject(msg);
-                out.flush(); // Always flush after writing an object
+                out.flush();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            Platform.exit(); // Close the application cleanly
+            Platform.exit();
         });
 
         return chatPanel;
