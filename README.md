@@ -1,4 +1,5 @@
-Connect four JavaFX that connect to the server to allow players to play online. 
+Connect four JavaFX that connect to the server to allow players to play online. The players are allowed to see each others moves, chat in the chat erea, and the will be notifed of the winer and losser and the end of each game. The server will also mention the number of wins and losses. All of that done using Java progreamming language and javaFX GUI.
+
 Wireframe of the project:
 
 <img width="801" height="879" alt="Screenshot 2025-09-06 at 1 34 36 PM" src="https://github.com/user-attachments/assets/a8e7d2c4-7f06-4d42-8df7-458e0da82d2a" />
