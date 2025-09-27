@@ -1,4 +1,36 @@
-Connect four JavaFX that connect to the server to allow players to play online. The players are allowed to see each other's moves, chat in the chat area, and they will be notified of the winner and loser and the end of each game. The server will also mention the number of wins and losses. All of that done using Java programming language and javaFX GUI.
+A JavaFX client that connects to a Java server so players can play Connect Four online. Players see each other’s moves in real time, chat in an in-app messenger, and get automatic win/loss notifications at game end. The server tracks wins and losses across games.
+
+Features
+
+1-Online multiplayer: Real-time board updates via sockets.
+
+2-Single-player mode: Play against the computer (optional).
+
+3-In-app chat: Message your opponent in a dedicated chat scene.
+
+4-Match results: Automatic winner/loser detection and alerts.
+
+5-Stats tracking: Server maintains win/loss counts per user.
+
+6-Clean UI: Scene-based JavaFX interface (Login → Game → Messenger).
+
+My Contributions
+
+Designed the JavaFX UI flow (login → mode select → board → messenger).
+
+Implemented network protocol, event handling, and thread-safe updates for moves/chat.
+
+Added result detection (horizontal/vertical/diagonal) and win/loss reporting to the server.
+
+Tech Stack
+
+Language: Java
+
+UI: JavaFX
+
+Networking: Java Sockets (multithreaded server with per-client handlers)
+
+Data model: 2D array board representation, server-side game sessions
 
 Wireframe of the project:
 
@@ -6,7 +38,11 @@ Wireframe of the project:
 
 <img width="777" height="870" alt="Screenshot 2025-09-06 at 1 35 43 PM" src="https://github.com/user-attachments/assets/57d64354-4bfe-412b-bb9e-440ec27c9e60" />
 
-When the  user enters the application (client code) they will see the first scene (scene above with number 1 on it) from here the user has two options either to exit the application from the quit button or continue to the game from the login button. When they click on the login button they will be asked to enter their username and password and choose either to play alone(with the computer) or with other players(multiplayer). When the user clicks on single or multiplayer go to scene 3.
+Scene 1 – Login: Username/password; choose Single or Multiplayer; Quit.
+
+Scene 2 – Game: 7×6 grid; place tokens, Play Again, Quit, Records, Messenger.
+
+Scene 3 – Messenger: Chat with opponent; return to Game at any time.
 
 Scene 3 is the game scene where the player can play in the 2d array and can choose where to put the token. They can reset the game from the play again button, quit the game from the quit button, view the record of the game from the record button, and go to the messaging scene to chat from the messenger button. From the messaging scene they can go back to the game scene.
 
